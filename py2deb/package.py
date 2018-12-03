@@ -332,6 +332,8 @@ class PackageToConvert(object):
                         dependencies.add('%s (>> %s)' % (debian_package_name, version))
                     elif constraint in ('<=', '>='):
                         dependencies.add('%s (%s %s)' % (debian_package_name, constraint, version))
+                    elif constraint == '~=':
+                        pass
                     else:
                         msg = "Conversion specifier not supported! (%r used by Python package %s)"
                         raise Exception(msg % (constraint, self.python_name))
@@ -381,8 +383,9 @@ class PackageToConvert(object):
             if self.has_custom_install_prefix:
                 build_modules_directory = os.path.join(build_install_prefix, 'lib')
             else:
-                dist_packages_directories = glob.glob(os.path.join(build_install_prefix, 'lib/python*/dist-packages'))
-                if len(dist_packages_directories) != 1:
+                dist_packages_directories = sorted(
+                    glob.glob(os.path.join(build_install_prefix, 'lib/python*/dist-packages')))
+                if len(dist_packages_directories) == 0:
                     msg = "Expected to find a single 'dist-packages' directory inside converted package!"
                     raise Exception(msg)
                 build_modules_directory = dist_packages_directories[0]
