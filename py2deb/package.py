@@ -343,6 +343,8 @@ class PackageToConvert(PropertyManager):
                         dependencies.add('%s (>> %s)' % (debian_package_name, version))
                     elif constraint in ('<=', '>='):
                         dependencies.add('%s (%s %s)' % (debian_package_name, constraint, version))
+                    elif constraint == '~=':
+                        pass
                     else:
                         msg = "Conversion specifier not supported! (%r used by Python package %s)"
                         raise Exception(msg % (constraint, self.python_name))
@@ -395,8 +397,9 @@ class PackageToConvert(PropertyManager):
                 build_modules_directory = os.path.join(build_install_prefix, 'lib')
             else:
                 # The /py*/ pattern below is intended to match both /pythonX.Y/ and /pypyX.Y/.
-                dist_packages_directories = glob.glob(os.path.join(build_install_prefix, 'lib/py*/dist-packages'))
-                if len(dist_packages_directories) != 1:
+                dist_packages_directories = sorted(
+                    glob.glob(os.path.join(build_install_prefix, 'lib/python*/dist-packages')))
+                if len(dist_packages_directories) == 0:
                     msg = "Expected to find a single 'dist-packages' directory inside converted package!"
                     raise Exception(msg)
                 build_modules_directory = dist_packages_directories[0]
