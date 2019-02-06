@@ -2,6 +2,7 @@
 
 coloredlogs >= 0.5
 deb-pkg-tools >= 5.2
+python-debian==0.1.33
 executor >= 21.0
 humanfriendly >= 4.4
 pip-accel >= 0.25
